@@ -448,6 +448,7 @@ class Image extends AbstractElement
         } elseif (filter_var($this->source, FILTER_VALIDATE_URL) !== false) {
             $this->memoryImage = true;
             if (strpos($this->source, 'https') === 0) {
+
                 $headers = array( 'Range: bytes=0-131072' );    
                 if ( !empty( $referer ) ) { array_push( $headers, 'Referer: ' . $referer ); }
         
@@ -461,6 +462,7 @@ class Image extends AbstractElement
                 $curl_errno = curl_errno( $ch );
                 curl_close( $ch );
                     
+                
                 // Get network stauts
                 if ( $http_status != 200 ) {
                     echo 'HTTP Status[' . $http_status . '] Errno [' . $curl_errno . ']';
