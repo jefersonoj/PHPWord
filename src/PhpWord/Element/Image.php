@@ -448,7 +448,29 @@ class Image extends AbstractElement
         } elseif (filter_var($this->source, FILTER_VALIDATE_URL) !== false) {
             $this->memoryImage = true;
             if (strpos($this->source, 'https') === 0) {
-                $fileContent = file_get_contents($this->source);
+                $headers = array( 'Range: bytes=0-131072' );    
+                if ( !empty( $referer ) ) { array_push( $headers, 'Referer: ' . $referer ); }
+        
+                // Get remote image
+                $ch = curl_init();
+                curl_setopt( $ch, CURLOPT_URL, $this->source );
+                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+                curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+                $data = curl_exec( $ch );
+                $http_status = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+                $curl_errno = curl_errno( $ch );
+                curl_close( $ch );
+                    
+                // Get network stauts
+                if ( $http_status != 200 ) {
+                    echo 'HTTP Status[' . $http_status . '] Errno [' . $curl_errno . ']';
+                    return [0,0];
+                }
+        
+                // Process image
+                $fileContent = $data;
+
+                // $fileContent = file_get_contents($this->source);
                 $this->source = $fileContent;
                 $this->sourceType = self::SOURCE_STRING;
             } else {
