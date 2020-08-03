@@ -462,14 +462,11 @@ class Image extends AbstractElement
                 $curl_errno = curl_errno( $ch );
                 curl_close( $ch );
                     
-                
-                // Get network stauts
                 if ( $http_status != 200 ) {
                     echo 'HTTP Status[' . $http_status . '] Errno [' . $curl_errno . ']';
                     return [0,0];
                 }
-        
-                // Process image
+                
                 $fileContent = $data;
 
                 // $fileContent = file_get_contents($this->source);
